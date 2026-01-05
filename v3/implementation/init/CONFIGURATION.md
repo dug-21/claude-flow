@@ -1,8 +1,10 @@
-# Configuration Options
+# Configuration Reference
 
 Complete reference for V3 init configuration options.
 
-## InitOptions Interface
+## InitOptions
+
+Main configuration interface for the init system.
 
 ```typescript
 interface InitOptions {
@@ -10,20 +12,18 @@ interface InitOptions {
   sourceBaseDir?: string;      // Source directory for skills/commands/agents
   force: boolean;              // Overwrite existing files
   interactive: boolean;        // Enable interactive prompts
-  components: InitComponents;  // Components to initialize
-  hooks: HooksConfig;          // Hooks configuration
-  skills: SkillsConfig;        // Skills selection
-  commands: CommandsConfig;    // Commands selection
-  agents: AgentsConfig;        // Agents selection
-  statusline: StatuslineConfig; // Statusline configuration
-  mcp: MCPConfig;              // MCP server configuration
-  runtime: RuntimeConfig;      // Runtime configuration
+  components: InitComponents;  // Which components to install
+  hooks: HooksConfig;          // Hook configuration
+  skills: SkillsConfig;        // Skills to install
+  commands: CommandsConfig;    // Commands to install
+  agents: AgentsConfig;        // Agents to install
+  statusline: StatuslineConfig; // Statusline options
+  mcp: MCPConfig;              // MCP server config
+  runtime: RuntimeConfig;      // V3 runtime config
 }
 ```
 
 ## Components
-
-Control which components are created:
 
 ```typescript
 interface InitComponents {
@@ -32,42 +32,43 @@ interface InitComponents {
   commands: boolean;    // .claude/commands/
   agents: boolean;      // .claude/agents/
   helpers: boolean;     // .claude/helpers/
-  statusline: boolean;  // Statusline scripts
+  statusline: boolean;  // statusline scripts
   mcp: boolean;         // .mcp.json
   runtime: boolean;     // .claude-flow/
 }
 ```
 
-| Component | Default | Minimal | Full |
-|-----------|---------|---------|------|
-| settings | true | true | true |
-| skills | true | true | true |
-| commands | true | false | true |
-| agents | true | false | true |
-| helpers | true | false | true |
-| statusline | true | false | true |
-| mcp | true | true | true |
-| runtime | true | true | true |
-
-## Hooks Configuration
-
-Configure which Claude Code hooks are enabled:
-
+### Default Components
 ```typescript
-interface HooksConfig {
-  preToolUse: boolean;       // Before tool execution
-  postToolUse: boolean;      // After tool execution
-  userPromptSubmit: boolean; // Task routing
-  sessionStart: boolean;     // Session initialization
-  stop: boolean;             // Task completion evaluation
-  notification: boolean;     // Swarm notifications
-  permissionRequest: boolean; // Auto-allow claude-flow tools
-  timeout: number;           // Hook timeout (ms)
-  continueOnError: boolean;  // Continue if hook fails
+{
+  settings: true,
+  skills: true,
+  commands: true,
+  agents: true,
+  helpers: true,
+  statusline: false,  // Optional
+  mcp: true,
+  runtime: true,
 }
 ```
 
-### Default Hook Settings
+## Hooks Configuration
+
+```typescript
+interface HooksConfig {
+  preToolUse: boolean;        // Before tool operations
+  postToolUse: boolean;       // After tool operations
+  userPromptSubmit: boolean;  // On prompt submission
+  sessionStart: boolean;      // On session start
+  stop: boolean;              // On stop consideration
+  notification: boolean;      // On notifications
+  permissionRequest: boolean; // On permission requests
+  timeout: number;            // Default timeout (ms)
+  continueOnError: boolean;   // Continue on hook failure
+}
+```
+
+### Default Hooks
 ```typescript
 {
   preToolUse: true,
@@ -78,144 +79,92 @@ interface HooksConfig {
   notification: true,
   permissionRequest: true,
   timeout: 5000,
-  continueOnError: true
+  continueOnError: true,
 }
 ```
 
 ## Skills Configuration
 
-Select which skill sets to install:
-
 ```typescript
 interface SkillsConfig {
-  core: boolean;      // swarm-orchestration, sparc-methodology, etc.
-  agentdb: boolean;   // agentdb-*, reasoningbank-*
-  github: boolean;    // github-code-review, github-multi-repo, etc.
-  flowNexus: boolean; // flow-nexus-neural, flow-nexus-platform, etc.
-  v3: boolean;        // v3-cli-modernization, v3-core-implementation, etc.
-  all: boolean;       // Install all available skills
+  core: boolean;       // Core development skills
+  agentdb: boolean;    // AgentDB integration skills
+  github: boolean;     // GitHub automation skills
+  flowNexus: boolean;  // Flow Nexus platform skills
+  v3: boolean;         // V3-specific skills
+  all: boolean;        // Install all available skills
 }
 ```
 
-### Skills by Category
+### Skill Sets
 
-**Core Skills:**
-- swarm-orchestration
-- swarm-advanced
-- sparc-methodology
-- hooks-automation
-- pair-programming
-- verification-quality
-- stream-chain
-- skill-builder
-
-**AgentDB Skills:**
-- agentdb-advanced
-- agentdb-learning
-- agentdb-memory-patterns
-- agentdb-optimization
-- agentdb-vector-search
-- reasoningbank-agentdb
-- reasoningbank-intelligence
-
-**GitHub Skills:**
-- github-code-review
-- github-multi-repo
-- github-project-management
-- github-release-management
-- github-workflow-automation
-
-**Flow Nexus Skills:**
-- flow-nexus-neural
-- flow-nexus-platform
-- flow-nexus-swarm
-
-**V3 Skills:**
-- v3-cli-modernization
-- v3-core-implementation
-- v3-ddd-architecture
-- v3-integration-deep
-- v3-mcp-optimization
-- v3-memory-unification
-- v3-performance-optimization
-- v3-security-overhaul
-- v3-swarm-coordination
+| Set | Skills Count | Description |
+|-----|-------------|-------------|
+| core | 8 | Swarm, SPARC, hooks, pair programming |
+| agentdb | 7 | Vector search, memory patterns, learning |
+| github | 5 | Code review, releases, workflows |
+| flowNexus | 3 | Neural, swarm, platform skills |
+| v3 | 9 | V3 implementation skills |
 
 ## Commands Configuration
 
-Select which command groups to install:
-
 ```typescript
 interface CommandsConfig {
-  core: boolean;         // claude-flow-help, claude-flow-swarm, etc.
-  analysis: boolean;     // analysis/
-  automation: boolean;   // automation/
-  github: boolean;       // github/
-  hooks: boolean;        // hooks/
-  monitoring: boolean;   // monitoring/
-  optimization: boolean; // optimization/
-  sparc: boolean;        // sparc/
-  all: boolean;          // Install all commands
+  core: boolean;         // Core commands
+  analysis: boolean;     // Code analysis
+  automation: boolean;   // Task automation
+  github: boolean;       // GitHub operations
+  hooks: boolean;        // Hook management
+  monitoring: boolean;   // System monitoring
+  optimization: boolean; // Performance tuning
+  sparc: boolean;        // SPARC methodology
 }
 ```
 
 ## Agents Configuration
 
-Select which agent categories to install:
-
 ```typescript
 interface AgentsConfig {
-  core: boolean;      // core/ (coder, tester, reviewer, etc.)
-  consensus: boolean; // consensus/
-  github: boolean;    // github/
-  hiveMind: boolean;  // hive-mind/
-  sparc: boolean;     // sparc/
-  swarm: boolean;     // swarm/
-  all: boolean;       // Install all agents
-}
-```
-
-## Statusline Configuration
-
-Configure shell statusline integration:
-
-```typescript
-interface StatuslineConfig {
-  enabled: boolean;         // Enable statusline
-  showProgress: boolean;    // Show V3 progress
-  showSecurity: boolean;    // Show security status
-  showSwarm: boolean;       // Show swarm activity
-  showHooks: boolean;       // Show hooks metrics
-  showPerformance: boolean; // Show performance targets
-  refreshInterval: number;  // Refresh interval (ms)
+  core: boolean;      // Basic development agents
+  github: boolean;    // GitHub-integrated agents
+  sparc: boolean;     // SPARC methodology agents
+  swarm: boolean;     // Swarm coordination agents
+  consensus: boolean; // Distributed consensus agents
+  hiveMind: boolean;  // Collective intelligence agents
 }
 ```
 
 ## MCP Configuration
 
-Configure MCP server integration:
-
 ```typescript
 interface MCPConfig {
-  claudeFlow: boolean; // Include claude-flow MCP server
-  ruvSwarm: boolean;   // Include ruv-swarm MCP server
-  flowNexus: boolean;  // Include flow-nexus MCP server
-  autoStart: boolean;  // Auto-start MCP server
-  port: number;        // Server port
+  claudeFlow: boolean;    // claude-flow MCP server
+  agenticFlow: boolean;   // agentic-flow integration
+  memory: boolean;        // Memory MCP tools
+  neural: boolean;        // Neural MCP tools
+  github: boolean;        // GitHub MCP integration
 }
 ```
 
-## Runtime Configuration
+### MCP Environment Variables
 
-Configure V3 runtime settings:
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `CLAUDE_FLOW_MODE` | `v3` | Operation mode |
+| `CLAUDE_FLOW_HOOKS_ENABLED` | `true` | Enable hooks |
+| `CLAUDE_FLOW_TOPOLOGY` | `hierarchical-mesh` | Swarm topology |
+| `CLAUDE_FLOW_MAX_AGENTS` | `15` | Maximum agents |
+| `CLAUDE_FLOW_MEMORY_BACKEND` | `hybrid` | Memory backend |
+
+## Runtime Configuration
 
 ```typescript
 interface RuntimeConfig {
   topology: 'mesh' | 'hierarchical' | 'hierarchical-mesh' | 'adaptive';
-  maxAgents: number;        // Maximum concurrent agents
+  maxAgents: number;
   memoryBackend: 'memory' | 'sqlite' | 'agentdb' | 'hybrid';
-  enableHNSW: boolean;      // Enable HNSW indexing
-  enableNeural: boolean;    // Enable neural learning
+  enableHNSW: boolean;    // HNSW indexing
+  enableNeural: boolean;  // Neural features
 }
 ```
 
@@ -223,72 +172,130 @@ interface RuntimeConfig {
 
 | Topology | Description | Best For |
 |----------|-------------|----------|
-| mesh | Peer-to-peer coordination | Small teams, simple tasks |
-| hierarchical | Tree-based coordination | Large teams, complex tasks |
-| hierarchical-mesh | Combined approach | Complex projects (recommended) |
-| adaptive | Dynamic switching | Variable workloads |
+| `mesh` | Peer-to-peer | Small teams |
+| `hierarchical` | Queen-led | Large projects |
+| `hierarchical-mesh` | Hybrid | Most projects |
+| `adaptive` | Auto-switching | Dynamic workloads |
 
-### Memory Backend Options
+## Statusline Configuration
 
-| Backend | Speed | Persistence | Vector Search | Best For |
-|---------|-------|-------------|---------------|----------|
-| memory | Fast | No | No | Development, testing |
-| sqlite | Medium | Yes | No | Standard projects |
-| agentdb | Fast | Yes | 150x faster | AI-heavy workloads |
-| hybrid | Fast | Yes | Yes | Production (recommended) |
+```typescript
+interface StatuslineConfig {
+  enabled: boolean;
+  style: 'minimal' | 'standard' | 'detailed';
+  position: 'left' | 'right';
+  refreshInterval: number;  // ms
+}
+```
 
 ## Preset Configurations
 
 ### DEFAULT_INIT_OPTIONS
+
+Recommended for most projects:
+
 ```typescript
 {
-  components: { all: true except statusline },
-  hooks: { all: true },
-  skills: { core, agentdb, github, v3 },
-  commands: { all: true },
-  agents: { core, github, hiveMind, sparc, swarm },
+  targetDir: process.cwd(),
+  force: false,
+  interactive: true,
+  components: {
+    settings: true,
+    skills: true,
+    commands: true,
+    agents: true,
+    helpers: true,
+    statusline: false,
+    mcp: true,
+    runtime: true,
+  },
+  hooks: {
+    preToolUse: true,
+    postToolUse: true,
+    userPromptSubmit: true,
+    sessionStart: true,
+    stop: true,
+    notification: true,
+    permissionRequest: true,
+    timeout: 5000,
+    continueOnError: true,
+  },
+  skills: {
+    core: true,
+    agentdb: true,
+    github: true,
+    flowNexus: false,
+    v3: true,
+    all: false,
+  },
+  commands: {
+    core: true,
+    analysis: true,
+    automation: true,
+    github: true,
+    hooks: true,
+    monitoring: true,
+    optimization: true,
+    sparc: true,
+  },
+  agents: {
+    core: true,
+    github: true,
+    sparc: true,
+    swarm: true,
+    consensus: false,
+    hiveMind: false,
+  },
   runtime: {
     topology: 'hierarchical-mesh',
     maxAgents: 15,
     memoryBackend: 'hybrid',
     enableHNSW: true,
-    enableNeural: true
-  }
+    enableNeural: true,
+  },
 }
 ```
 
 ### MINIMAL_INIT_OPTIONS
+
+Lightweight configuration:
+
 ```typescript
 {
-  components: { settings, skills, mcp, runtime only },
-  hooks: { preToolUse, postToolUse, permissionRequest only },
-  skills: { core only },
-  agents: { core only },
+  // ... base options
+  components: {
+    settings: true,
+    skills: true,
+    commands: false,
+    agents: false,
+    helpers: false,
+    statusline: false,
+    mcp: true,
+    runtime: true,
+  },
+  skills: { core: true, /* others false */ },
+  agents: { core: true, /* others false */ },
   runtime: {
     topology: 'mesh',
     maxAgents: 5,
     memoryBackend: 'memory',
     enableHNSW: false,
-    enableNeural: false
-  }
+    enableNeural: false,
+  },
 }
 ```
 
 ### FULL_INIT_OPTIONS
+
+Everything enabled:
+
 ```typescript
 {
-  components: { all: true },
-  hooks: { all: true },
-  skills: { all: true },
-  commands: { all: true },
-  agents: { all: true },
-  mcp: { claudeFlow, ruvSwarm, flowNexus },
-  runtime: {
-    topology: 'hierarchical-mesh',
-    maxAgents: 15,
-    memoryBackend: 'hybrid',
-    enableHNSW: true,
-    enableNeural: true
-  }
+  // All components: true
+  // All skills: true (including flowNexus, all)
+  // All commands: true
+  // All agents: true (including consensus, hiveMind)
+  // All hooks: true
+  // All MCP servers: true
 }
 ```

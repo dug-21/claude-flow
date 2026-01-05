@@ -1,116 +1,121 @@
 # V3 Init System
 
-Comprehensive initialization system for Claude Flow V3 with Claude Code integration.
+Comprehensive initialization system for Claude Code integration with claude-flow V3.
 
 ## Overview
 
-The V3 init system creates a complete Claude Code integration setup including:
+The V3 init system creates a complete development environment including:
 - `.claude/` directory with settings, skills, commands, agents, and helpers
-- `.claude-flow/` directory for V3 runtime configuration
-- `.mcp.json` for MCP server configuration
+- `.claude-flow/` runtime configuration
+- `.mcp.json` MCP server configuration
+- Cross-platform support (Windows, macOS, Linux)
 
 ## Quick Start
 
+### CLI Usage
+
 ```bash
 # Default initialization (recommended settings)
-claude-flow init
+npx @claude-flow/cli init
+
+# Minimal setup (lightweight)
+npx @claude-flow/cli init --minimal
+
+# Full setup (everything enabled)
+npx @claude-flow/cli init --full
+
+# Force overwrite existing files
+npx @claude-flow/cli init --force
 
 # Interactive wizard
-claude-flow init wizard
-
-# Minimal setup (core features only)
-claude-flow init --minimal
-
-# Full setup (all components)
-claude-flow init --full
+npx @claude-flow/cli init wizard
 ```
 
-## Architecture
+### Programmatic Usage
 
-```
-v3/@claude-flow/cli/src/init/
-├── types.ts              # Configuration interfaces
-├── settings-generator.ts # settings.json with hooks
-├── mcp-generator.ts      # .mcp.json configuration
-├── statusline-generator.ts # Shell statusline scripts
-├── helpers-generator.ts  # Utility helper scripts
-├── executor.ts           # Main execution logic
-└── index.ts              # Module exports
+```typescript
+import { executeInit, DEFAULT_INIT_OPTIONS } from '@claude-flow/cli/init';
+
+const result = await executeInit({
+  ...DEFAULT_INIT_OPTIONS,
+  targetDir: process.cwd(),
+  sourceBaseDir: '/path/to/claude-flow',
+});
+
+console.log(`Created ${result.created.files.length} files`);
+console.log(`Platform: ${result.platform.os} (${result.platform.shell})`);
 ```
 
-## Generated Structure
+## Features
+
+### Platform Auto-Detection
+
+The init system automatically detects:
+- Operating system (Windows, macOS, Linux)
+- CPU architecture (x64, arm64)
+- Default shell (PowerShell, Bash, Zsh)
+- Config directory locations
+
+### Component Selection
+
+Choose which components to install:
+- **Settings**: Claude Code hooks and permissions
+- **Skills**: Specialized capabilities (50+)
+- **Commands**: Quick action shortcuts
+- **Agents**: Agent definitions (25+)
+- **Helpers**: Utility scripts
+- **Statusline**: Real-time progress display
+- **MCP**: Server configuration
+- **Runtime**: V3 configuration
+
+### Preset Configurations
+
+| Preset | Description |
+|--------|-------------|
+| `DEFAULT` | Recommended for most projects |
+| `MINIMAL` | Lightweight, essential features only |
+| `FULL` | Everything enabled |
+
+## Documentation
+
+- [Configuration Options](./CONFIGURATION.md)
+- [Components Reference](./COMPONENTS.md)
+- [Hooks Reference](./HOOKS.md)
+- [Programmatic API](./API.md)
+
+## Created Structure
 
 ```
 project/
 ├── .claude/
-│   ├── settings.json     # Claude Code hooks configuration
-│   ├── skills/           # Claude Code skills
-│   ├── commands/         # Claude Code commands
-│   ├── agents/           # Agent definitions
-│   └── helpers/          # Utility scripts
+│   ├── settings.json      # Hooks and permissions
+│   ├── skills/            # 50+ skills
+│   ├── commands/          # Command shortcuts
+│   ├── agents/            # Agent definitions
+│   ├── helpers/           # Utility scripts
+│   ├── statusline.sh      # Unix statusline
+│   └── statusline.mjs     # ESM module
 ├── .claude-flow/
-│   ├── config.yaml       # V3 runtime configuration
-│   ├── data/             # Persistent data storage
-│   ├── logs/             # Log files
-│   ├── sessions/         # Session archives
-│   ├── hooks/            # Custom hooks
-│   ├── agents/           # Agent state
-│   └── workflows/        # Workflow definitions
-└── .mcp.json             # MCP server configuration
+│   ├── config.yaml        # Runtime config
+│   ├── data/              # Persistent data
+│   ├── logs/              # Log files
+│   └── sessions/          # Session archives
+└── .mcp.json              # MCP server config
 ```
 
-## Documentation
+## Cross-Platform Support
 
-- [Configuration Options](./CONFIGURATION.md) - All configuration options
-- [Hooks Reference](./HOOKS.md) - Generated hooks documentation
-- [Components](./COMPONENTS.md) - Component details
-- [API Reference](./API.md) - Programmatic API usage
+### Windows
+- PowerShell daemon manager (`daemon-manager.ps1`)
+- Batch wrapper (`daemon-manager.cmd`)
+- Windows-compatible paths
 
-## Commands
+### macOS
+- Bash/Zsh compatible scripts
+- Zsh statusline hooks
+- Library/Application Support paths
 
-| Command | Description |
-|---------|-------------|
-| `init` | Initialize with default settings |
-| `init wizard` | Interactive setup wizard |
-| `init check` | Check initialization status |
-| `init skills` | Install only skills |
-| `init hooks` | Initialize only hooks |
-
-## Options
-
-| Flag | Short | Description |
-|------|-------|-------------|
-| `--force` | `-f` | Overwrite existing files |
-| `--minimal` | `-m` | Minimal configuration |
-| `--full` | | Full configuration with all components |
-| `--skip-claude` | | Skip .claude/ directory |
-| `--only-claude` | | Only create .claude/ directory |
-
-## Presets
-
-### Default
-Recommended settings for most projects:
-- Core skills, AgentDB, GitHub, V3 skills
-- All command groups
-- Core, GitHub, SPARC, Swarm agents
-- All 7 hook types enabled
-- Hierarchical-mesh topology
-- 15 max agents
-- Hybrid memory backend
-
-### Minimal
-Lightweight configuration:
-- Core skills only
-- Core agents only
-- Essential hooks (PreToolUse, PostToolUse, PermissionRequest)
-- Mesh topology
-- 5 max agents
-- In-memory backend
-
-### Full
-Everything enabled:
-- All skill sets including Flow Nexus
-- All command groups
-- All agent categories
-- All hook types
-- All MCP servers
+### Linux
+- Bash scripts
+- XDG-compliant paths
+- ~/.config directory support
