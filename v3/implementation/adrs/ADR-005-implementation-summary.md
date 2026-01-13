@@ -487,6 +487,18 @@ All MCP tools now exposed via CLI commands in `@claude-flow/cli@3.0.0-alpha.7`:
 2. **Null Coalescing** - Added null checks for optional response fields
    - `agent pool`, `agent health`, `hive-mind status` now handle undefined values
 
+3. **Init Source Directory Path Calculation** (alpha.90) - Fixed path calculation in `findSourceDir()`, `findSourceHelpersDir()`, and `findSourceClaudeDir()`
+   - Issue: Init command resulted in empty folders (skills, agents, commands, helpers)
+   - Root cause: Path calculation went up 4 levels from `dist/src/init` instead of 3 levels
+   - Fix: Changed `path.resolve(__dirname, '..', '..', '..', '..')` to `path.resolve(__dirname, '..', '..', '..')`
+   - Affected: 3 functions in `executor.ts` (lines 465, 584, 778)
+   - Result: Init now correctly populates 91 agents, 29 skills, 10 commands, 38 helpers
+
+4. **Mac Settings Validation** (alpha.89) - Fixed Claude Code settings.json validation errors on macOS
+   - Issue: `PermissionRequest` hook type not recognized; permission patterns required `:*` syntax
+   - Fix: Removed `PermissionRequest` hook block; changed patterns from `*` to `:*` (e.g., `Bash(npx claude-flow:*)`)
+   - Affected: `settings-generator.ts`, `types.ts`, `.claude/settings.json`
+
 #### Testing Results
 
 ```bash
