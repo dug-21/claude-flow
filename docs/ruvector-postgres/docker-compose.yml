@@ -1,32 +1,26 @@
-# RuVector PostgreSQL Testing Environment
-# Using the official RuVector PostgreSQL extension from ruvnet/ruvector
+# PostgreSQL with pgvector Testing Environment
+# pgvector provides core vector operations compatible with RuVector
 #
 # Features:
-# - 77+ SQL functions for vector operations
-# - HNSW and IVFFlat indexing
-# - 39 Attention mechanisms (self, multi-head, cross)
-# - GNN layers for graph operations
-# - Hyperbolic embeddings (Poincaré/Lorentz)
-# - Sparse vectors (BM25/TF-IDF)
-# - SPARQL support (50+ RDF functions)
-# - Local embeddings (6 fastembed models)
-# - Self-learning index optimization
-# - SIMD acceleration (AVX-512/AVX2/NEON)
+# - Vector similarity search (HNSW/IVFFlat)
+# - Cosine, L2, Inner Product distances
+# - Efficient approximate nearest neighbor search
+# - JSON metadata support
 #
-# Performance: ~61µs latency, 16,400 QPS, 200MB for 1M vectors
+# Note: Using pgvector/pgvector:pg17 as ruvnet/ruvector-postgres has
+# extension installation issues. RuVector functions can be added via
+# custom SQL when the image is fixed.
+#
+# Performance: ~1ms latency, 10,000+ QPS with HNSW
 
 services:
   postgres:
-    image: ruvnet/ruvector-postgres:latest
+    image: pgvector/pgvector:pg17
     container_name: ruvector-postgres
     environment:
       POSTGRES_USER: claude
       POSTGRES_PASSWORD: claude-flow-test
       POSTGRES_DB: claude_flow
-      # RuVector specific settings
-      RUVECTOR_SIMD: auto  # auto-detect best SIMD (AVX-512/AVX2/NEON)
-      RUVECTOR_CACHE_SIZE: 256MB
-      RUVECTOR_LEARN_ENABLED: 'true'
     ports:
       - "5432:5432"
     volumes:
@@ -40,9 +34,7 @@ services:
     # Optimize for vector operations
     command: >
       postgres
-      -c shared_preload_libraries='ruvector'
-      -c ruvector.hnsw_ef_search=100
-      -c ruvector.enable_parallel=on
+      -c shared_preload_libraries='vector'
       -c work_mem=256MB
       -c maintenance_work_mem=512MB
 
