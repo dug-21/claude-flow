@@ -1,6 +1,6 @@
 # ADR-049: Self-Learning Memory with GNN & RuVector Integration
 
-**Status:** Implementing
+**Status:** Implemented
 **Date:** 2026-02-08
 **Authors:** RuvNet, Claude Flow Team
 **Supersedes:** None
