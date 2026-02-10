@@ -555,18 +555,25 @@ Standard retention policy as safety net:
 - **Default retention**: 30 days (configurable via `CLAUDE_FLOW_RETENTION_DAYS`)
 - **Never prunes accessed entries**: If it was ever restored, it's kept
 
-### Stage 4: Embedding Generation
+### Stage 4: ONNX Embedding Generation (384-dim)
 
-Entries without vector embeddings get 768-dim hash embeddings generated:
+Entries without vector embeddings get 384-dim ONNX embeddings generated using
+`@xenova/transformers` with the `all-MiniLM-L6-v2` model:
 
 ```
-Per cycle: up to 20 entries embedded (backfills incrementally)
-Storage: Float32Array → Buffer → BLOB column in SQLite
-Purpose: Enables cross-session semantic search
+Model:     Xenova/all-MiniLM-L6-v2 (ONNX, local inference, no API calls)
+Dimension: 384 (down from 768 hash — better quality, less storage)
+Pooling:   mean pooling + L2 normalization
+Fallback:  384-dim hash embedding if ONNX unavailable
+Per cycle:  up to 20 entries embedded (backfills incrementally)
+Storage:   Float32Array → Buffer → BLOB column in SQLite (~1.5KB/entry)
 ```
 
-Once all entries are embedded, this stage becomes a no-op for existing entries
-and only processes newly archived turns.
+ONNX embeddings provide real semantic understanding vs hash embeddings which
+are purely deterministic approximations. Search for "auth optimization" will
+find entries about "authentication performance" — hash embeddings cannot do this.
+
+Once all entries are embedded, this stage only processes newly archived turns.
 
 ### Stage 5: RuVector Sync
 
