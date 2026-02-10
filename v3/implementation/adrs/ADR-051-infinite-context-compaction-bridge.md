@@ -776,8 +776,9 @@ All capabilities confirmed working (2026-02-10):
 
 | File | Lines | Purpose |
 |------|-------|---------|
-| `.claude/helpers/context-persistence-hook.mjs` | ~1560 | Core hook script (all 4 backends, autopilot, all commands) |
-| `.claude/settings.json` | +9 | Hook wiring: PreCompact, SessionStart, UserPromptSubmit |
+| `.claude/helpers/context-persistence-hook.mjs` | ~1600 | Core hook script (all 4 backends, autopilot, all commands) |
+| `.claude/helpers/patch-aggressive-prune.mjs` | ~120 | SDK patch: aggressive text pruning for cli.js |
+| `.claude/settings.json` | +12 | Hook wiring + pruning config env vars |
 | `tests/context-persistence-hook.test.mjs` | ~150 | Unit tests for parsing, chunking, dedup, retrieval |
 | `v3/implementation/adrs/ADR-051-infinite-context-compaction-bridge.md` | this file | Architecture decision record |
 
